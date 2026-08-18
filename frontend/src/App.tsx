@@ -97,7 +97,8 @@ const CITIES = [
 
 
 
-const API_BASE_URL = 'http://localhost:8080/api/battery';
+const API_HOST = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = `${API_HOST}/api/battery`;
 
 export default function App() {
   // Scroll & Active Section States
@@ -161,7 +162,7 @@ export default function App() {
       }
       const dbId = parts[1];
 
-      const response = await fetch(`http://localhost:8080/api/battery/public/assessment/${dbId}`);
+      const response = await fetch(`${API_HOST}/api/battery/public/assessment/${dbId}`);
       if (response.ok) {
         const data = await response.json();
         setQrReportData(data.assessment);
@@ -249,7 +250,7 @@ export default function App() {
       if (vehicleTypeFilter) params.append('vehicleType', vehicleTypeFilter);
       if (chemistryFilter) params.append('chemistry', chemistryFilter);
       
-      const response = await fetch(`http://localhost:8080/api/marketplace/listings?${params.toString()}`);
+      const response = await fetch(`${API_HOST}/api/marketplace/listings?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         
@@ -287,7 +288,7 @@ export default function App() {
         status: 'AVAILABLE'
       };
       
-      const response = await fetch('http://localhost:8080/api/marketplace/listings', {
+      const response = await fetch(`${API_HOST}/api/marketplace/listings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -401,7 +402,7 @@ export default function App() {
 
   const fetchMyVehicles = async (email: string) => {
     try {
-      const response = await fetch('http://localhost:8080/api/battery/vehicles', {
+      const response = await fetch(`${API_HOST}/api/battery/vehicles`, {
         headers: {
           'X-User-Email': email
         }
@@ -451,7 +452,7 @@ export default function App() {
     setError('');
     setSuccessMsg('');
     try {
-      const response = await fetch('http://localhost:8080/api/auth/send-otp', {
+      const response = await fetch(`${API_HOST}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ gmail: registerEmail.trim() }),
@@ -485,7 +486,7 @@ export default function App() {
     setError('');
     setSuccessMsg('');
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
+      const response = await fetch(`${API_HOST}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -928,7 +929,7 @@ export default function App() {
     setSelectedStation(null);
 
     try {
-      const response = await fetch(`http://localhost:8080/api/charging-stations/nearby?latitude=${userLat}&longitude=${userLng}&radius=${searchRadius}`);
+      const response = await fetch(`${API_HOST}/api/charging-stations/nearby?latitude=${userLat}&longitude=${userLng}&radius=${searchRadius}`);
       if (response.ok) {
         const data = await response.json();
         setNearbyStations(data);
@@ -1046,7 +1047,7 @@ export default function App() {
   // Fetch EV list for dropdown
   const fetchEvList = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/evs');
+      const response = await fetch(`${API_HOST}/api/evs`);
       if (response.ok) {
         const data = await response.json();
         setAllEvsList(data);
@@ -1074,7 +1075,7 @@ export default function App() {
     setSelectedRecIndexForDealers(null);
 
     try {
-      const response = await fetch('http://localhost:8080/api/evs/recommend', {
+      const response = await fetch(`${API_HOST}/api/evs/recommend`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1128,7 +1129,7 @@ export default function App() {
       if (recBudget) params.append('budget', recBudget.toString());
       if (recCity) params.append('city', recCity);
 
-      const response = await fetch(`http://localhost:8080/api/evs/compare?${params.toString()}`);
+      const response = await fetch(`${API_HOST}/api/evs/compare?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         setComparisonResult(data);
@@ -1166,7 +1167,7 @@ export default function App() {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch(`${API_HOST}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ gmail: loginEmail, password: loginPassword }),

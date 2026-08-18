@@ -21,6 +21,8 @@ import java.util.*;
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"})
 public class PassportLinkController {
 
+    private static final boolean DISABLE_SMTP = Boolean.parseBoolean(System.getenv().getOrDefault("DISABLE_SMTP", "true"));
+
     private final UserRepository userRepository;
     private final PassportLinkRepository passportLinkRepository;
     private final OtpVerificationRepository otpRepository;
@@ -109,6 +111,13 @@ public class PassportLinkController {
         otpRepository.save(otpVerification);
 
         // Send Email using Gmail SMTP config
+        if (DISABLE_SMTP) {
+            System.out.println("----------------------------------------");
+            System.out.println("[TEST MODE] Generated Passport Link OTP for " + gmail + ": " + otp);
+            System.out.println("----------------------------------------");
+            return ResponseEntity.ok(Map.of("success", true, "message", "[TEST MODE] Verification code generated: " + otp + " (Google SMTP is temporarily disabled)"));
+        }
+
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom("prateek2222kumar@gmail.com");
