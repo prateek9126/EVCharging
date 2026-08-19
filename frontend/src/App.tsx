@@ -359,9 +359,6 @@ export default function App() {
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
-  const [registerOtp, setRegisterOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCooldown, setOtpCooldown] = useState(0);
 
   // User details
   const [user, setUser] = useState<{ name: string; gmail: string } | null>(null);
@@ -384,13 +381,7 @@ export default function App() {
   const [vehicleHistory, setVehicleHistory] = useState<BatteryAnalysis[]>([]);
   const [lastAssessment, setLastAssessment] = useState<BatteryAnalysis | null>(null);
 
-  // Cooldown timer for OTP resend
-  useEffect(() => {
-    if (otpCooldown > 0) {
-      const timer = setTimeout(() => setOtpCooldown(prev => prev - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [otpCooldown]);
+
 
   const getHeaders = (): HeadersInit => {
     const headers: HeadersInit = {};
@@ -443,43 +434,10 @@ export default function App() {
     }
   }, [view, marketplaceLocation, vehicleTypeFilter, chemistryFilter, priceFilter, sohFilter]);
 
-  const handleSendOtp = async () => {
-    if (!registerEmail.trim()) {
-      setError('Please enter your Gmail address.');
-      return;
-    }
-    setLoading(true);
-    setError('');
-    setSuccessMsg('');
-    try {
-      const response = await fetch(`${API_HOST}/api/auth/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gmail: registerEmail.trim() }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setOtpSent(true);
-        setSuccessMsg(data.message || 'OTP sent successfully.');
-        setOtpCooldown(30);
-      } else {
-        setError(data.message || 'Failed to send OTP.');
-      }
-    } catch (err) {
-      setError('Could not connect to server to send OTP. Make sure Spring Boot is running.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (registerPassword !== registerConfirmPassword) {
       setError('Passwords do not match.');
-      return;
-    }
-    if (!registerOtp) {
-      setError('Please enter the 6-digit OTP verification code.');
       return;
     }
     setLoading(true);
@@ -493,8 +451,7 @@ export default function App() {
           name: registerName,
           phoneNumber: registerPhone,
           gmail: registerEmail,
-          password: registerPassword,
-          otp: registerOtp
+          password: registerPassword
         }),
       });
       const data = await response.json();
@@ -505,8 +462,6 @@ export default function App() {
         setRegisterEmail('');
         setRegisterPassword('');
         setRegisterConfirmPassword('');
-        setRegisterOtp('');
-        setOtpSent(false);
         setAuthMode('login');
       } else {
         setError(data.message || 'Registration failed.');
@@ -2452,44 +2407,15 @@ export default function App() {
 
                   <div className="form-group">
                     <label htmlFor="registerEmail">Gmail Address</label>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <input
-                        id="registerEmail"
-                        type="email"
-                        placeholder="yourname@gmail.com"
-                        value={registerEmail}
-                        onChange={(e) => setRegisterEmail(e.target.value)}
-                        required
-                        style={{ flexGrow: 1 }}
-                        disabled={otpSent}
-                      />
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        onClick={handleSendOtp}
-                        disabled={loading || otpCooldown > 0}
-                        style={{ padding: '0 0.75rem', fontSize: '0.78rem', height: '38px', whiteSpace: 'nowrap' }}
-                      >
-                        {otpCooldown > 0 ? `Resend in ${otpCooldown}s` : otpSent ? 'Resend OTP' : 'Send OTP'}
-                      </button>
-                    </div>
+                    <input
+                      id="registerEmail"
+                      type="email"
+                      placeholder="yourname@gmail.com"
+                      value={registerEmail}
+                      onChange={(e) => setRegisterEmail(e.target.value)}
+                      required
+                    />
                   </div>
-
-                  {otpSent && (
-                    <div className="form-group" style={{ animation: 'fade-in 0.3s ease-out' }}>
-                      <label htmlFor="registerOtp" style={{ color: 'var(--color-secondary)', fontWeight: 600 }}>Enter 6-Digit OTP</label>
-                      <input
-                        id="registerOtp"
-                        type="text"
-                        maxLength={6}
-                        placeholder="Enter the code sent to your email"
-                        value={registerOtp}
-                        onChange={(e) => setRegisterOtp(e.target.value.replace(/\D/g, ''))}
-                        required
-                        style={{ borderColor: 'var(--color-secondary)' }}
-                      />
-                    </div>
-                  )}
 
                   <div className="form-group">
                     <label htmlFor="registerPassword">Password</label>
@@ -2515,8 +2441,8 @@ export default function App() {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }} disabled={!otpSent}>
-                    Verify & Register
+                  <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}>
+                    Register
                     <Zap size={16} />
                   </button>
                 </form>
