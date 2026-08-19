@@ -16,7 +16,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/evs")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"})
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+        "https://evcharging-1.onrender.com"
+})
 public class EvController {
 
     private final EvModelRepository evRepository;

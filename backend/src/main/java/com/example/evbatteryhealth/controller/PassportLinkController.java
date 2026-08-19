@@ -13,7 +13,13 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/marketplace/passport-links")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"})
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+        "https://evcharging-1.onrender.com"
+})
 public class PassportLinkController {
 
     private final UserRepository userRepository;
