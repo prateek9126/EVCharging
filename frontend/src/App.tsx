@@ -758,6 +758,13 @@ export default function App() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!isLoggedIn) {
+      setError('Please login to run the battery diagnostic analysis and AI models.');
+      setIsLoginOpen(true);
+      return;
+    }
+
     setLoading(true);
 
     // Form Validaion checks
@@ -1030,6 +1037,11 @@ export default function App() {
   // Personalized EV Recommendation
   const handleFindMyBestEv = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isLoggedIn) {
+      setRecSearchError('Please login to find and analyze best EV matches.');
+      setIsLoginOpen(true);
+      return;
+    }
     if (recBudget === '' || recBudget <= 0) {
       setRecSearchError('Please specify a budget greater than 0.');
       return;
@@ -1074,6 +1086,11 @@ export default function App() {
   // Direct EV vs EV Comparison
   const handleCompareEvs = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isLoggedIn) {
+      setCompSearchError('Please login to compare EV models.');
+      setIsLoginOpen(true);
+      return;
+    }
     if (!compEv1 || !compEv2) {
       setCompSearchError('Please select both EV models to compare.');
       return;
