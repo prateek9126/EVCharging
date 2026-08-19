@@ -114,6 +114,7 @@ export default function App() {
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [feedbackError, setFeedbackError] = useState('');
   const [feedbackSuccess, setFeedbackSuccess] = useState(false);
+  const [isPartnerOpen, setIsPartnerOpen] = useState(false);
 
   // Nearest Charging Stations States & Refs
   const [selectedCityName, setSelectedCityName] = useState<string>('');
@@ -3981,57 +3982,6 @@ export default function App() {
             )}
           </section>
 
-          {/* SECTION 3E: PARTNER WITH US */}
-          <section id="partner-section" className="scroll-section-block" style={{ padding: '4rem 2.5rem', background: 'var(--bg-primary)', borderBottom: '1px solid var(--border-color)', minHeight: 'auto' }}>
-            <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-              <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-                <span style={{ 
-                  background: 'var(--color-secondary-light)', 
-                  color: 'var(--color-secondary)', 
-                  padding: '0.45rem 1.25rem', 
-                  borderRadius: '50px', 
-                  fontSize: '0.78rem', 
-                  fontWeight: 800, 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '2px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  marginBottom: '0.75rem'
-                }}>
-                  🤝 COLLABORATION
-                </span>
-                <h2 style={{ fontSize: '2.25rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
-                  Partner With Us
-                </h2>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginTop: '0.5rem' }}>
-                  Connect with our regional heads for integration, licensing, and business partnerships.
-                </p>
-              </div>
-
-              <div className="partner-grid">
-                {[
-                  { name: 'Prateek Kumar', phone: '+91 4827XXXXXX', role: 'Chief Executive Officer' },
-                  { name: 'Harsh Kumar', phone: '+91 7314XXXXXX', role: 'Head of Technology' },
-                  { name: 'Kumar Piyush', phone: '+91 2596XXXXXX', role: 'Director of Operations' },
-                  { name: 'Priyanshu Singh', phone: '+91 8462XXXXXX', role: 'Lead Battery Architect' },
-                  { name: 'Piyush Pradhan', phone: '+91 3158XXXXXX', role: 'Head of Business Development' },
-                  { name: 'Priyansi', phone: '+91 6743XXXXXX', role: 'Customer Success Manager' }
-                ].map((partner, index) => (
-                  <div key={index} className="partner-card">
-                    <div className="partner-avatar">
-                      {partner.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div className="partner-info">
-                      <h3>{partner.name}</h3>
-                      <p className="partner-role">{partner.role}</p>
-                      <p className="partner-phone">📞 {partner.phone}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
           {/* SECTION 4: CONTACT US & ABOUT US */}
           <section id="contact-about-section" className="contact-us-layout">
         
@@ -4099,7 +4049,7 @@ export default function App() {
             <button 
               type="button" 
               className="btn" 
-              onClick={() => scrollToSection('partner-section')}
+              onClick={() => setIsPartnerOpen(true)}
               style={{ 
                 background: '#ece4db', 
                 border: 'none', 
@@ -4199,7 +4149,32 @@ export default function App() {
               </button>
             </div>
           ) : (
-            <div className="report-two-column-layout" style={{ display: 'grid', gridTemplateColumns: '1.8fr 1.2fr', gap: '2rem', animation: 'fade-in 0.6s ease-out' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={handleBackToData}
+                  style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem',
+                    padding: '0.65rem 1.75rem',
+                    fontSize: '0.85rem',
+                    borderRadius: 'var(--border-radius-sm)',
+                    background: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-primary)',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    boxShadow: 'var(--shadow-soft)'
+                  }}
+                >
+                  <ArrowLeft size={16} />
+                  Back to Data
+                </button>
+              </div>
+
+              <div className="report-two-column-layout" style={{ display: 'grid', gridTemplateColumns: '1.8fr 1.2fr', gap: '2rem', animation: 'fade-in 0.6s ease-out' }}>
               
               {/* LEFT COLUMN: Battery Health Report details */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -4604,6 +4579,7 @@ export default function App() {
               </div>
 
             </div>
+            </div>
           )}
         </section>
       ) : view === 'passport' ? (
@@ -4837,7 +4813,7 @@ export default function App() {
                       onClick={handleBackToData}
                       style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                     >
-                      Back to Data Entry
+                      Back to Data
                     </button>
                   </div>
                 </div>
@@ -6357,6 +6333,61 @@ export default function App() {
                 </button>
               </form>
             )}
+          </div>
+        </div>
+      )}
+      {/* Partner Modal Overlay */}
+      {isPartnerOpen && (
+        <div className="modal-backdrop">
+          <div className="card modal-content" style={{ animation: 'fade-in 0.3s ease-out', maxWidth: '850px', width: '90%', padding: '2.5rem' }}>
+            <button className="modal-close" onClick={() => setIsPartnerOpen(false)}>
+              <X size={20} />
+            </button>
+            
+            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <span style={{ 
+                background: 'var(--color-secondary-light)', 
+                color: 'var(--color-secondary)', 
+                padding: '0.45rem 1.25rem', 
+                borderRadius: '50px', 
+                fontSize: '0.78rem', 
+                fontWeight: 800, 
+                textTransform: 'uppercase', 
+                letterSpacing: '2px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                marginBottom: '0.75rem'
+              }}>
+                🤝 COLLABORATION
+              </span>
+              <h2 style={{ fontSize: '2.25rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                Partner With Us
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginTop: '0.5rem' }}>
+                Connect with our regional heads for integration, licensing, and business partnerships.
+              </p>
+            </div>
+
+            <div className="partner-grid">
+              {[
+                { name: 'Prateek Kumar', phone: '+91 4827XXXXXX' },
+                { name: 'Harsh Kumar', phone: '+91 7314XXXXXX' },
+                { name: 'Kumar Piyush', phone: '+91 2596XXXXXX' },
+                { name: 'Priyanshu Singh', phone: '+91 8462XXXXXX' },
+                { name: 'Piyush Pradhan', phone: '+91 3158XXXXXX' },
+                { name: 'Priyansi', phone: '+91 6743XXXXXX' }
+              ].map((partner, index) => (
+                <div key={index} className="partner-card">
+                  <div className="partner-avatar">
+                    {partner.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div className="partner-info">
+                    <h3>{partner.name}</h3>
+                    <p className="partner-phone" style={{ margin: 0 }}>📞 {partner.phone}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

@@ -251,4 +251,28 @@
   .brand-info h1 {
     font-size: 1rem !important;
   }
+  form.charging-control-panel > div {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Ensure no horizontal scroll across all viewports */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+
+/* Adjust hero branding text sizes on small viewports */
+@media (max-width: 600px) {
+  .hero-brand-block {
+    left: 5% !important;
+    width: 90% !important;
+  }
+  .hero-brand-name {
+    font-size: 2.25rem !important;
+    flex-wrap: wrap !important;
+  }
+  .hero-brand-tag {
+    font-size: 1.25rem !important;
+  }
 }
