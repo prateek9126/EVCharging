@@ -5764,7 +5764,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2.5rem' }}>
+                    <div className="secondlife-layout-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2.5rem' }}>
                       
                       {/* Left Column: Process & Cost Table */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -5963,7 +5963,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2.5rem' }}>
+                    <div className="secondlife-layout-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2.5rem' }}>
                       
                       {/* Left Column: Process & Cost Table */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
