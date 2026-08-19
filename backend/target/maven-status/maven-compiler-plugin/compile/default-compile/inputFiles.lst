@@ -2,6 +2,7 @@ C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\controller\BatteryController.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\controller\ChargingStationController.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\controller\EvController.java
+C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\controller\FeedbackController.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\controller\MarketplaceController.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\controller\PassportLinkController.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\EvBatteryHealthApplication.java
@@ -11,6 +12,7 @@ C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\model\EvDealer.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\model\EvModel.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\model\EvServiceCenter.java
+C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\model\Feedback.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\model\PassportLink.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\model\User.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\model\Vehicle.java
@@ -20,9 +22,11 @@ C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\repository\EvDealerRepository.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\repository\EvModelRepository.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\repository\EvServiceCenterRepository.java
+C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\repository\FeedbackRepository.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\repository\PassportLinkRepository.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\repository\UserRepository.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\repository\VehicleRepository.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\service\BatteryAnalysisService.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\service\BatteryListingService.java
+C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\service\FeedbackService.java
 C:\Users\prate\OneDrive\Desktop\EBackUp\New folder\feature\backend\src\main\java\com\example\evbatteryhealth\util\PasswordEncoder.java

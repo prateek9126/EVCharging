@@ -46,3 +46,209 @@
     padding: 2rem !important;
   }
 }
+
+/* Partner Grid and Cards Styles */
+.partner-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.partner-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all var(--transition-normal);
+}
+.partner-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+  border-color: var(--color-success);
+}
+.partner-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-success);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.partner-info h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  color: var(--text-primary);
+}
+.partner-role {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.partner-phone {
+  font-size: 0.85rem;
+  color: var(--color-success);
+  margin: 0;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .partner-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .partner-grid {
+    grid-template-columns: 1fr;
+  }
+  .partner-card {
+    padding: 1.25rem;
+  }
+}
+
+/* Mobile Toggler and Navigation Overlay */
+.hamburger-btn {
+  display: none;
+}
+.mobile-nav-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 1040;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+.mobile-nav-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0.75rem 1.25rem !important;
+    width: 100%;
+  }
+  .brand-info h1 {
+    font-size: 1.15rem !important;
+  }
+  .brand-tagline {
+    display: none !important;
+  }
+  .hamburger-btn {
+    display: block;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .transparent .hamburger-btn {
+    color: #ffffff;
+  }
+  .scrolled .hamburger-btn {
+    color: var(--text-primary);
+  }
+  .top-nav {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: var(--bg-primary);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    padding: 5rem 2rem 2rem !important;
+    gap: 1.5rem !important;
+    transition: right 0.3s ease-in-out;
+    z-index: 1050;
+    align-items: flex-start;
+  }
+  .top-nav.open {
+    right: 0;
+  }
+  .top-nav .nav-link {
+    color: var(--text-primary) !important;
+    width: 100%;
+    text-align: left;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 0;
+  }
+  .top-nav .nav-link::after {
+    display: none !important;
+  }
+}
+
+/* Feedback Styles */
+.feedback-alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.feedback-alert.error {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+.star-rating-btn:focus {
+  outline: none;
+  transform: scale(1.15);
+}
+
+/* Card responsiveness fixes across the board */
+@media (max-width: 768px) {
+  .sl-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .features-page-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .illustration-column {
+    position: relative !important;
+    top: 0 !important;
+    min-height: auto !important;
+    padding: 1.5rem !important;
+  }
+  .scroll-section-block {
+    padding: 5.5rem 1.25rem 2rem !important;
+  }
+  .stats-subgrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-subgrid {
+    grid-template-columns: 1fr !important;
+  }
+  .brand-info h1 {
+    font-size: 1rem !important;
+  }
+}

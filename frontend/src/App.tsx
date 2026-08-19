@@ -21,7 +21,9 @@ import {
   X,
   Search,
   Printer,
-  ShieldCheck
+  ShieldCheck,
+  Menu,
+  MessageSquare
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -105,6 +107,13 @@ export default function App() {
   const [activeSection, setActiveSection] = useState<'home' | 'features' | 'analysis'>('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [feedbackRating, setFeedbackRating] = useState<number>(0);
+  const [feedbackText, setFeedbackText] = useState<string>('');
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [feedbackError, setFeedbackError] = useState('');
+  const [feedbackSuccess, setFeedbackSuccess] = useState(false);
 
   // Nearest Charging Stations States & Refs
   const [selectedCityName, setSelectedCityName] = useState<string>('');
@@ -1153,6 +1162,52 @@ export default function App() {
     }
   };
 
+  const handleFeedbackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFeedbackError('');
+    
+    const trimmedFeedback = feedbackText.trim();
+    if (feedbackRating === 0) {
+      setFeedbackError('Please select a rating of 1 to 5 stars.');
+      return;
+    }
+    if (!trimmedFeedback) {
+      setFeedbackError('Please write some feedback.');
+      return;
+    }
+
+    try {
+      setFeedbackLoading(true);
+      const response = await fetch(`${API_HOST}/api/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          rating: feedbackRating,
+          feedback: trimmedFeedback,
+        }),
+      });
+
+      if (response.ok) {
+        setFeedbackSuccess(true);
+        setFeedbackText('');
+        setFeedbackRating(0);
+        setTimeout(() => {
+          setFeedbackSuccess(false);
+          setIsFeedbackOpen(false);
+        }, 3000);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setFeedbackError(errorData.message || 'Failed to submit feedback. Please try again.');
+      }
+    } catch (err) {
+      setFeedbackError('Unable to connect to the server. Please check your internet connection.');
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -2186,13 +2241,27 @@ export default function App() {
             <BatteryCharging />
           </div>
           <div>
-            <h1>EV Battery Diagnostics</h1>
+            <h1 style={{ fontSize: '1.25rem', margin: 0 }}>EV Battery Diagnostics</h1>
             <div className="brand-tagline">Advanced battery state-of-health & degradation modeling</div>
           </div>
         </div>
 
+        {/* Mobile Navigation Toggler */}
+        {(view === 'main' || view === 'secondlife') && (
+          <button 
+            className="hamburger-btn" 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle Navigation"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        )}
+
+        {/* Mobile Nav Backdrop Overlay */}
+        <div className={`mobile-nav-backdrop ${isMobileMenuOpen ? 'open' : ''}`} onClick={() => setIsMobileMenuOpen(false)}></div>
+
         {/* Top-Right Navigation */}
-        <nav className="top-nav">
+        <nav className={`top-nav ${isMobileMenuOpen ? 'open' : ''}`}>
           {view === 'main' || view === 'secondlife' ? (
             <>
               <button 
@@ -2200,6 +2269,7 @@ export default function App() {
                 onClick={() => {
                   setView('main');
                   scrollToSection('home-section');
+                  setIsMobileMenuOpen(false);
                 }}
               >
                 Home
@@ -2209,6 +2279,7 @@ export default function App() {
                 onClick={() => {
                   setView('main');
                   scrollToSection('features-section');
+                  setIsMobileMenuOpen(false);
                 }}
               >
                 Features
@@ -2218,13 +2289,17 @@ export default function App() {
                 onClick={() => {
                   setView('secondlife');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setIsMobileMenuOpen(false);
                 }}
               >
                 Second Life
               </button>
               <button 
                 className="nav-link"
-                onClick={() => setIsLoginOpen(true)}
+                onClick={() => {
+                  setIsLoginOpen(true);
+                  setIsMobileMenuOpen(false);
+                }}
               >
                 {isLoggedIn ? `Account (${user?.name})` : 'Login'}
               </button>
@@ -2235,6 +2310,7 @@ export default function App() {
                 <button className="nav-link" onClick={() => {
                   setView('main');
                   scrollToSection('home-section');
+                  setIsMobileMenuOpen(false);
                 }}>
                   Back to Dashboard
                 </button>
@@ -3905,6 +3981,57 @@ export default function App() {
             )}
           </section>
 
+          {/* SECTION 3E: PARTNER WITH US */}
+          <section id="partner-section" className="scroll-section-block" style={{ padding: '4rem 2.5rem', background: 'var(--bg-primary)', borderBottom: '1px solid var(--border-color)', minHeight: 'auto' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+              <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+                <span style={{ 
+                  background: 'var(--color-secondary-light)', 
+                  color: 'var(--color-secondary)', 
+                  padding: '0.45rem 1.25rem', 
+                  borderRadius: '50px', 
+                  fontSize: '0.78rem', 
+                  fontWeight: 800, 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '2px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  marginBottom: '0.75rem'
+                }}>
+                  🤝 COLLABORATION
+                </span>
+                <h2 style={{ fontSize: '2.25rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                  Partner With Us
+                </h2>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginTop: '0.5rem' }}>
+                  Connect with our regional heads for integration, licensing, and business partnerships.
+                </p>
+              </div>
+
+              <div className="partner-grid">
+                {[
+                  { name: 'Prateek Kumar', phone: '+91 4827XXXXXX', role: 'Chief Executive Officer' },
+                  { name: 'Harsh Kumar', phone: '+91 7314XXXXXX', role: 'Head of Technology' },
+                  { name: 'Kumar Piyush', phone: '+91 2596XXXXXX', role: 'Director of Operations' },
+                  { name: 'Priyanshu Singh', phone: '+91 8462XXXXXX', role: 'Lead Battery Architect' },
+                  { name: 'Piyush Pradhan', phone: '+91 3158XXXXXX', role: 'Head of Business Development' },
+                  { name: 'Priyansi', phone: '+91 6743XXXXXX', role: 'Customer Success Manager' }
+                ].map((partner, index) => (
+                  <div key={index} className="partner-card">
+                    <div className="partner-avatar">
+                      {partner.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div className="partner-info">
+                      <h3>{partner.name}</h3>
+                      <p className="partner-role">{partner.role}</p>
+                      <p className="partner-phone">📞 {partner.phone}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
           {/* SECTION 4: CONTACT US & ABOUT US */}
           <section id="contact-about-section" className="contact-us-layout">
         
@@ -3946,6 +4073,7 @@ export default function App() {
             <button 
               type="button" 
               className="btn" 
+              onClick={() => setIsFeedbackOpen(true)}
               style={{ 
                 background: 'transparent', 
                 border: '1.5px solid rgba(255, 255, 255, 0.4)', 
@@ -3954,7 +4082,8 @@ export default function App() {
                 fontWeight: 700,
                 fontSize: '0.85rem',
                 borderRadius: '0px',
-                letterSpacing: '1px'
+                letterSpacing: '1px',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#ffffff';
@@ -3970,6 +4099,7 @@ export default function App() {
             <button 
               type="button" 
               className="btn" 
+              onClick={() => scrollToSection('partner-section')}
               style={{ 
                 background: '#ece4db', 
                 border: 'none', 
@@ -3978,7 +4108,8 @@ export default function App() {
                 fontWeight: 800,
                 fontSize: '0.85rem',
                 borderRadius: '0px',
-                letterSpacing: '1px'
+                letterSpacing: '1px',
+                cursor: 'pointer'
               }}
             >
               PARTNER WITH US
@@ -6112,6 +6243,122 @@ export default function App() {
             </div>
           );
         })()
+      )}
+
+      {/* Feedback Modal Overlay */}
+      {isFeedbackOpen && (
+        <div className="modal-backdrop">
+          <div className="card modal-content feedback-modal-card" style={{ animation: 'fade-in 0.3s ease-out', maxWidth: '480px', width: '90%', padding: '2rem' }}>
+            <button className="modal-close" onClick={() => {
+              setIsFeedbackOpen(false);
+              setFeedbackError('');
+              setFeedbackSuccess(false);
+            }}>
+              <X size={20} />
+            </button>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem', textAlign: 'center', alignItems: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--color-success-light)', color: 'var(--color-success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <MessageSquare size={24} />
+              </div>
+              <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>We value your feedback!</h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                Tell us about your experience using the dashboard and diagnostics tools.
+              </p>
+            </div>
+
+            {feedbackError && (
+              <div className="feedback-alert error">
+                <AlertTriangle size={16} />
+                {feedbackError}
+              </div>
+            )}
+
+            {feedbackSuccess ? (
+              <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+                <CheckCircle size={44} className="text-success" style={{ margin: '0 auto 1rem' }} />
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Thank you for your feedback!</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '0.5rem' }}>
+                  Your response has been saved successfully.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleFeedbackSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                
+                {/* Rating selection */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    Your Rating
+                  </span>
+                  <div style={{ display: 'flex', gap: '0.35rem' }} role="radiogroup" aria-label="Star Rating">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setFeedbackRating(star)}
+                        className={`star-rating-btn ${feedbackRating >= star ? 'active' : ''}`}
+                        role="radio"
+                        aria-checked={feedbackRating === star}
+                        aria-label={`${star} star${star > 1 ? 's' : ''}`}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '1.8rem',
+                          color: feedbackRating >= star ? '#F59E0B' : '#CBD5E1',
+                          padding: '0.25rem',
+                          transition: 'transform 0.15s ease, color 0.15s ease'
+                        }}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                  {feedbackRating > 0 && (
+                    <span style={{ fontSize: '0.78rem', color: '#F59E0B', fontWeight: 700 }}>
+                      {feedbackRating} Star{feedbackRating > 1 ? 's' : ''} Selected
+                    </span>
+                  )}
+                </div>
+
+                {/* Text feedback */}
+                <div className="form-group">
+                  <label htmlFor="feedbackText" style={{ fontWeight: 600 }}>Comments</label>
+                  <textarea
+                    id="feedbackText"
+                    placeholder="Tell us what you think..."
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    required
+                    rows={4}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 0.85rem',
+                      fontFamily: 'var(--font-family)',
+                      fontSize: '0.92rem',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--border-radius-sm)',
+                      backgroundColor: 'var(--bg-secondary)',
+                      color: 'var(--text-primary)',
+                      resize: 'vertical',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={feedbackLoading}
+                  style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
+                >
+                  {feedbackLoading ? 'Submitting...' : 'Submit Feedback'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
       )}
 
     </div>

@@ -8,11 +8,14 @@ com\example\evbatteryhealth\EvBatteryHealthApplication.class
 com\example\evbatteryhealth\repository\UserRepository.class
 com\example\evbatteryhealth\controller\ChargingStationController.class
 com\example\evbatteryhealth\model\ChargingStation.class
+com\example\evbatteryhealth\repository\FeedbackRepository.class
 com\example\evbatteryhealth\model\EvServiceCenter.class
 com\example\evbatteryhealth\controller\PassportLinkController.class
 com\example\evbatteryhealth\repository\EvDealerRepository.class
 com\example\evbatteryhealth\controller\EvController$RecommendationResult.class
 com\example\evbatteryhealth\repository\ChargingStationRepository.class
+com\example\evbatteryhealth\service\FeedbackService.class
+com\example\evbatteryhealth\model\Feedback.class
 com\example\evbatteryhealth\controller\AuthController.class
 com\example\evbatteryhealth\repository\EvModelRepository.class
 com\example\evbatteryhealth\model\BatteryListing.class
@@ -21,6 +24,7 @@ com\example\evbatteryhealth\repository\EvServiceCenterRepository.class
 com\example\evbatteryhealth\model\EvModel.class
 com\example\evbatteryhealth\repository\BatteryListingRepository.class
 com\example\evbatteryhealth\repository\VehicleRepository.class
+com\example\evbatteryhealth\controller\FeedbackController.class
 com\example\evbatteryhealth\repository\BatteryAnalysisRepository.class
 com\example\evbatteryhealth\util\PasswordEncoder.class
 com\example\evbatteryhealth\controller\MarketplaceController.class
