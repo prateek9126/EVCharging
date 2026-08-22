@@ -75,6 +75,7 @@ interface BatteryAnalysis {
   ageChange?: number;
   safetyScore?: number;
   riskLevel?: string;
+  isFallback?: boolean;
 }
 
 const CITIES = [
@@ -101,6 +102,122 @@ const CITIES = [
 
 const API_HOST = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 const API_BASE_URL = `${API_HOST}/api/battery`;
+
+function roundVal(value: number, places: number): number {
+  return Number(value.toFixed(places));
+}
+
+function calculateMockBatteryAnalysis(input: BatteryAnalysis): BatteryAnalysis {
+  const originalCapacity = input.originalCapacity;
+  const currentUsableCapacity = input.currentUsableCapacity;
+  
+  // 1. Calculate SoH
+  const rawSoh = (currentUsableCapacity / originalCapacity) * 100.0;
+  let soh = roundVal(rawSoh, 2);
+  soh = Math.min(100.0, Math.max(0.0, soh));
+  
+  // 2. Calculate Capacity Loss
+  let capacityLoss = roundVal(originalCapacity - currentUsableCapacity, 2);
+  capacityLoss = Math.max(0.0, capacityLoss);
+  
+  // 3. Determine Battery Condition
+  let condition: string;
+  if (soh >= 90.0) {
+    condition = "Excellent";
+  } else if (soh >= 80.0) {
+    condition = "Good";
+  } else if (soh >= 70.0) {
+    condition = "Moderate";
+  } else {
+    condition = "Degraded";
+  }
+  
+  // 4. Calculate Data Confidence Score
+  let confidence = 0.0;
+  if (input.manufacturer && input.manufacturer.trim() && input.model && input.model.trim()) {
+    confidence += 15.0;
+  }
+  if (input.batteryAge && input.batteryAge > 0) {
+    confidence += 10.0;
+  }
+  if (input.odometer && input.odometer > 0) {
+    confidence += 15.0;
+  }
+  if (input.originalCapacity && input.originalCapacity > 0 && input.currentUsableCapacity && input.currentUsableCapacity > 0) {
+    confidence += 20.0;
+  }
+  if (input.chargingCycles && input.chargingCycles > 0) {
+    confidence += 15.0;
+  }
+  if (input.averageTemperature !== undefined && input.averageTemperature !== null) {
+    confidence += 10.0;
+  }
+  if (input.normalChargingPercentage !== undefined && input.normalChargingPercentage !== null &&
+      input.fastChargingPercentage !== undefined && input.fastChargingPercentage !== null) {
+    const total = input.normalChargingPercentage + input.fastChargingPercentage;
+    if (Math.abs(total - 100.0) < 1.0) {
+      confidence += 15.0;
+    } else if (total > 0) {
+      confidence += 5.0;
+    }
+  }
+  confidence = roundVal(confidence, 1);
+  
+  // 5. Generate Explanation
+  let explanation = `Estimated Battery Health is ${soh}% (Condition: ${condition}). ` +
+    `The pack has lost ${capacityLoss} kWh of its original ${originalCapacity} kWh usable capacity, meaning it is currently operating at ${currentUsableCapacity} kWh. `;
+    
+  const annualOdometer = input.batteryAge > 0 ? (input.odometer / input.batteryAge) : 0;
+  const cyclesPerYear = input.batteryAge > 0 ? (input.chargingCycles / input.batteryAge) : 0;
+  
+  explanation += `With an odometer reading of ${Number(input.odometer).toLocaleString()} km over ${input.batteryAge} years, the vehicle averages ${Number(annualOdometer.toFixed(0)).toLocaleString()} km annually. ` +
+    `The battery has experienced ${input.chargingCycles} charging cycles (approx. ${cyclesPerYear.toFixed(0)} cycles/year). `;
+    
+  const expectedLossPerYear = 2.0;
+  const actualLossPerYear = input.batteryAge > 0 ? ((100.0 - soh) / input.batteryAge) : 0;
+  
+  if (actualLossPerYear > expectedLossPerYear + 1.0) {
+    explanation += "This degradation rate is higher than average, which can be linked to external factors. ";
+  } else if (actualLossPerYear < expectedLossPerYear - 0.5) {
+    explanation += "This represents an exceptionally low degradation rate, indicating excellent battery health management. ";
+  } else {
+    explanation += "This is well within normal engineering expectations for lithium-ion battery chemistry. ";
+  }
+  
+  if (input.fastChargingPercentage > 40.0) {
+    explanation += `The high utilization of DC Fast Charging (${input.fastChargingPercentage.toFixed(0)}%) is a primary stress factor. Frequent rapid charging subjects the cells to elevated thermal levels and higher current density, accelerating capacity fade. `;
+  } else {
+    explanation += `Your charging profile is highly favorable, with ${input.normalChargingPercentage.toFixed(0)}% of charging completed on normal AC levels. Minimizing rapid charging is helping prevent micro-cracking and lithium plating on the anodes. `;
+  }
+  
+  if (input.averageTemperature > 30.0) {
+    explanation += `The average battery temperature of ${input.averageTemperature.toFixed(1)}°C is elevated. High ambient and operational temperatures promote secondary chemical reactions that consume active lithium, leading to faster permanent capacity loss. `;
+  } else if (input.averageTemperature < 10.0) {
+    explanation += `Operating in a cold climate (average ${input.averageTemperature.toFixed(1)}°C) temporarily decreases lithium ion mobility and reduces range, but helps retard long-term chemical aging of the cell pack. `;
+  } else {
+    explanation += `The average operating temperature of ${input.averageTemperature.toFixed(1)}°C is in the sweet spot (15°C - 25°C), preventing thermal degradation. `;
+  }
+  
+  if (soh < 75.0) {
+    explanation += "Recommendation: Schedule a professional dealer diagnostic. Consider adjusting the maximum charge limit to 80% and avoid discharging below 10% to stabilize health.";
+  } else if (soh < 85.0) {
+    explanation += "Recommendation: To maximize battery life, keep the daily charge limit set to 80%, avoid leaving the car at 100% State of Charge in hot weather, and use normal AC charging where possible.";
+  } else {
+    explanation += "Recommendation: Continue standard battery management. The battery chemistry is in healthy condition. Standard charging limits (up to 80%-90% daily) are recommended.";
+  }
+  
+  return {
+    ...input,
+    id: Date.now(),
+    soh,
+    capacityLoss,
+    condition,
+    confidenceScore: confidence,
+    explanation,
+    createdAt: new Date().toISOString(),
+    isFallback: true
+  };
+}
 
 export default function App() {
   // Scroll & Active Section States
@@ -382,6 +499,7 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
+  const [showFallbackButton, setShowFallbackButton] = useState<boolean>(false);
 
   // Vehicle Search & History states
   const [searchVehicleId, setSearchVehicleId] = useState('');
@@ -734,30 +852,64 @@ export default function App() {
       return;
     }
     
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
     try {
       setLoading(true);
+      setError('');
       const response = await fetch(`${API_BASE_URL}/history`, {
         method: 'DELETE',
-        headers: getHeaders()
+        headers: getHeaders(),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
       if (response.ok) {
         setHistory([]);
         setResult(null);
         setSuccessMsg('Database history cleared.');
         setTimeout(() => setSuccessMsg(''), 4000);
       } else {
-        setError('Failed to clear database logs.');
+        const status = response.status;
+        const errMsg = await response.text().catch(() => '');
+        setError(`Failed to clear database logs (HTTP ${status}): ${errMsg || response.statusText || 'Server Error'}`);
       }
-    } catch (err) {
-      setError('Connection to backend failed. Make sure Spring Boot is running.');
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      console.error('Failed to clear history:', err);
+      if (err.name === 'AbortError') {
+        setError('Request to clear database timed out. Please check backend connection.');
+      } else {
+        setError('Connection to backend failed. Make sure Spring Boot is running.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  const handleFallbackClick = () => {
+    setError('');
+    setShowFallbackButton(false);
+    try {
+      const mockResult = calculateMockBatteryAnalysis(formData);
+      setResult(mockResult);
+      
+      // Also add to local history so that it populates the history chart
+      setHistory(prevHistory => [...prevHistory, mockResult]);
+
+      setView('report');
+      window.scrollTo({ top: 0 });
+    } catch (err) {
+      console.error('Fallback calculation failed:', err);
+      setError('Failed to perform fallback calculations.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return; // Prevent multiple submissions
+    
     setError('');
+    setShowFallbackButton(false);
 
     if (!isLoggedIn) {
       setError('Please login to run the battery diagnostic analysis and AI models.');
@@ -765,41 +917,40 @@ export default function App() {
       return;
     }
 
-    setLoading(true);
-
-    // Form Validaion checks
+    // Form Validation checks
     if (!formData.manufacturer || !formData.model) {
       setError('Please provide manufacturer and model names.');
-      setLoading(false);
       return;
     }
     if (formData.batteryAge < 0 || formData.odometer < 0 || formData.chargingCycles < 0 || formData.averageRange < 0) {
       setError('Battery age, odometer, charging cycles, and range must be positive values.');
-      setLoading(false);
       return;
     }
     if (formData.originalCapacity <= 0 || formData.currentUsableCapacity <= 0) {
       setError('Original and Current Usable Capacities must be greater than 0.');
-      setLoading(false);
       return;
     }
     if (formData.currentUsableCapacity > formData.originalCapacity) {
       setError('Current Usable Capacity cannot exceed Original Capacity.');
-      setLoading(false);
       return;
     }
     if (formData.currentBatteryPercentage < 0 || formData.currentBatteryPercentage > 100) {
       setError('Current SoC (%) must be between 0 and 100.');
-      setLoading(false);
       return;
     }
     
     const chargingSum = formData.normalChargingPercentage + formData.fastChargingPercentage;
     if (Math.abs(chargingSum - 100.0) > 0.01) {
       setError(`Normal charging (${formData.normalChargingPercentage}%) and Fast charging (${formData.fastChargingPercentage}%) must sum to exactly 100%. Current sum: ${chargingSum}%`);
-      setLoading(false);
       return;
     }
+
+    setLoading(true);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, 12000); // 12-second timeout
 
     try {
       const headers = {
@@ -815,11 +966,14 @@ export default function App() {
           vehicleId: selectedVehicleId || undefined,
           vehicleType: vehicleType
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
-        setResult(data);
+        setResult({ ...data, isFallback: false });
         fetchHistory(); // Refresh history
         
         if (data.vehicleId) {
@@ -833,11 +987,21 @@ export default function App() {
         setView('report');
         window.scrollTo({ top: 0 });
       } else {
-        const errMsg = await response.text();
-        setError(`Analysis failed: ${errMsg || response.statusText}`);
+        const status = response.status;
+        const errMsg = await response.text().catch(() => '');
+        setError(`Analysis failed (HTTP ${status}): ${errMsg || response.statusText || 'Server Error'}`);
+        console.error(`Backend returned status ${status}: ${errMsg || response.statusText}`);
       }
-    } catch (err) {
-      setError('Failed to connect to the backend server. Verify Spring Boot is running on port 8080.');
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      console.error('API request failed:', err);
+      
+      if (err.name === 'AbortError') {
+        setError('Unable to process battery data. Please check the backend connection and try again.');
+      } else {
+        setError('Failed to connect to the backend server. Verify Spring Boot is running on port 8080.');
+      }
+      setShowFallbackButton(true); // Allow fallback demo mode
     } finally {
       setLoading(false);
     }
@@ -2949,11 +3113,39 @@ export default function App() {
                 marginBottom: '1.25rem',
                 fontSize: '0.88rem',
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
                 gap: '0.5rem'
               }} id="error-alert">
-                <AlertTriangle size={18} />
-                {error}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%' }}>
+                  <AlertTriangle size={18} style={{ flexShrink: 0 }} />
+                  <div style={{ flexGrow: 1 }}>{error}</div>
+                </div>
+                {showFallbackButton && (
+                  <button
+                    type="button"
+                    onClick={handleFallbackClick}
+                    className="btn btn-secondary"
+                    id="btn-use-fallback"
+                    style={{
+                      marginTop: '0.4rem',
+                      padding: '0.4rem 0.8rem',
+                      fontSize: '0.78rem',
+                      backgroundColor: 'var(--bg-primary)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--color-success)',
+                      cursor: 'pointer',
+                      borderRadius: 'var(--border-radius-sm)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      fontWeight: 600
+                    }}
+                  >
+                    <Zap size={12} />
+                    Run with Local Fallback (Demo)
+                  </button>
+                )}
               </div>
             )}
 
@@ -4223,6 +4415,25 @@ export default function App() {
                     </button>
                   </div>
                 </div>
+
+                {result.isFallback && (
+                  <div style={{
+                    background: 'var(--color-warning-light)',
+                    color: 'var(--color-warning)',
+                    padding: '0.85rem 1.25rem',
+                    borderRadius: 'var(--border-radius-sm)',
+                    border: '1px solid rgba(217, 119, 6, 0.3)',
+                    fontSize: '0.88rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    marginTop: '0.5rem',
+                    fontWeight: 500
+                  }} id="fallback-banner">
+                    <AlertTriangle size={18} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />
+                    <span><strong>Demo / Fallback Mode:</strong> The local Spring Boot backend was unreachable. Showing locally calculated diagnostics.</span>
+                  </div>
+                )}
 
 
 

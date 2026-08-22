@@ -106,7 +106,7 @@ public class EvController {
             "Extremely reliable TVS metal body shell,Quiet hub motor operation,Very comfortable for families", 
             "Conservative styling design,Underseat space is limited,No standard fast charging adapter",
             "Jamshedpur,Bhubaneswar,Delhi,Mumbai,Bengaluru,Pune,Hyderabad", 
-            "/images/tiago_ev.jpg", 0.24)); // Reusing loaded asset for visual diversity
+            "https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&w=300&q=80", 0.24));
 
         evs.add(new EvModel("Bajaj", "Chetak", "ELECTRIC_SCOOTER", "Standard", 115000.0, 120000.0, 
             113, 2.9, 290, "No", 73, 4.4, 420, 3, 4, 1, "Jamshedpur,Bhubaneswar,Delhi,Mumbai,Bengaluru,Pune,Hyderabad",
@@ -233,14 +233,14 @@ public class EvController {
             "Budget entry pricing for an electric motorcycle,Sleek roadster styling,Sporty split seats", 
             "Lightweight build chassis,Braking lacks bite on high speeds,Basic software display",
             "Jamshedpur,Bhubaneswar,Delhi,Mumbai,Bengaluru,Pune,Hyderabad", 
-            "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=300&q=80", 0.22));
+            "https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&w=300&q=80", 0.22));
 
         evs.add(new EvModel("Revolt", "RV1", "ELECTRIC_BIKE", "Commuter", 84900.0, 95000.0, 
             100, 2.2, 180, "No", 75, 4.1, 98, 5, 3, 1, "Jamshedpur,Bhubaneswar,Delhi,Mumbai,Bengaluru,Pune,Hyderabad",
             "Very low commuter running cost,Upright comfortable seating geometry,Metal guard frame standard", 
             "Low top speed,Basic digital dial without navigation maps,Average high speed performance",
             "Jamshedpur,Bhubaneswar,Delhi,Mumbai,Bengaluru,Pune,Hyderabad", 
-            "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=300&q=80", 0.24));
+            "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=300&q=80", 0.24));
 
         // Bike Budget ₹1,00,000–₹1,25,000
         evs.add(new EvModel("Ola", "Roadster X+", "ELECTRIC_BIKE", "Street", 110000.0, 120000.0, 
@@ -255,7 +255,7 @@ public class EvController {
             "Affordable price with decent range,Low maintenance bike parts,Excellent commuter ergonomics", 
             "Lacks high top speeds,Standard console lacks smart app maps,Hub motor power is modest",
             "Jamshedpur,Bhubaneswar,Delhi,Mumbai,Bengaluru,Pune,Hyderabad", 
-            "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=300&q=80", 0.24));
+            "https://images.unsplash.com/photo-1615172288446-241edf886981?auto=format&fit=crop&w=300&q=80", 0.24));
 
         evs.add(new EvModel("Revolt", "RVX", "ELECTRIC_BIKE", "Street", 115000.0, 125000.0, 
             120, 3.0, 220, "No", 80, 4.2, 70, 5, 3, 1, "Jamshedpur,Bhubaneswar,Delhi,Mumbai,Bengaluru,Pune,Hyderabad",
@@ -277,7 +277,7 @@ public class EvController {
             "Removable battery convenience,Artificial customizable engine sound speaker,Lightweight handling", 
             "Plastic panel quality could be improved,Suspension feels stiff,Basic digital dash",
             "Jamshedpur,Bhubaneswar,Delhi,Mumbai,Bengaluru,Pune,Hyderabad", 
-            "/images/revolt_bike.jpg", 0.25));
+            "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=300&q=80", 0.25));
 
         evs.add(new EvModel("Oben", "Rorr", "ELECTRIC_BIKE", "Street", 149000.0, 150000.0, 
             187, 4.4, 120, "Yes", 100, 4.4, 110, 3, 4, 1, "Delhi,Mumbai,Bengaluru,Pune,Hyderabad",
